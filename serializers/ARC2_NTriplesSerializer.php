@@ -15,7 +15,7 @@ class ARC2_NTriplesSerializer extends ARC2_RDFSerializer {
   function __construct($a, &$caller) {
     parent::__construct($a, $caller);
   }
-  
+
   function __init() {
     parent::__init();
     $this->esc_chars = array();
@@ -23,7 +23,7 @@ class ARC2_NTriplesSerializer extends ARC2_RDFSerializer {
   }
 
   /*  */
-  
+
   function getTerm($v, $term = '') {
     // type detection
     if (!is_array($v) || empty($v['type'])) {
@@ -74,7 +74,7 @@ class ARC2_NTriplesSerializer extends ARC2_RDFSerializer {
     //return $quot . "object" . utf8_encode($v['value']) . $quot . $suffix;
     return $quot . $this->escape($v['value']) . $quot . $suffix;
   }
-  
+
   function getSerializedIndex($index, $raw = 0) {
     $this->raw = $raw;
     $r = '';
@@ -95,13 +95,13 @@ class ARC2_NTriplesSerializer extends ARC2_RDFSerializer {
     }
     return $r . $nl;
   }
-  
+
   /*  */
 
   function escape($v) {
     $r = '';
-	// decode, if possible
-    $v = (strpos(utf8_decode(str_replace('?', '', $v)), '?') === false) ? utf8_decode($v) : $v;
+	 // decode, if possible -- Causes troubles with sequential characters that need to be escaped e.g. éé --
+    //$v = (strpos(utf8_decode(str_replace('?', '', $v)), '?') === false) ? utf8_decode($v) : $v;
 	if ($this->raw) return $v;// no further escaping wanted
 	// escape tabs and linefeeds
 	$v = str_replace(array("\t", "\r", "\n"), array('\t', '\r', '\n'), $v);
@@ -109,7 +109,7 @@ class ARC2_NTriplesSerializer extends ARC2_RDFSerializer {
 	$v = preg_replace_callback('/([^a-zA-Z0-9 \!\#\$\%\&\(\)\*\+\,\-\.\/\:\;\=\?\@\^\_\{\|\}]+)/', array($this, 'escapeChars'), $v);
 	return $v;
   }
-  
+
   function escapeChars($matches) {
 	$v = $matches[1];
 	$r = '';
@@ -146,9 +146,9 @@ class ARC2_NTriplesSerializer extends ARC2_RDFSerializer {
 	}
 	return $r;
   }
-  
+
   /*  */
-  
+
   function getCharNo($c, $is_encoded = false) {
     $c_utf = $is_encoded ? $c : utf8_encode($c);
     $bl = strlen($c_utf);/* binary length */
@@ -186,7 +186,7 @@ class ARC2_NTriplesSerializer extends ARC2_RDFSerializer {
     if ($no < 1114112)  return "\\U" . sprintf('%08X', $no);  /* #x10000-#x10FFFF (65536-1114111) */
     return '';                                                /* not defined => ignore */
   }
-  
+
   /*  */
- 
+
 }
